@@ -21,11 +21,19 @@ sdp2form<- function(sdp){
         as.formula(fomula)
 }
 
-diplotype_merge_mapping <- function(Phenofile,diplotype_file,MB,K=NULL,tmp.file.path="./"){
-
-        for (nm in list.files("~/SNPmerge/flu/miqtl-master/R/", pattern = "\\.[RrSsQq]$")) {
-                source(file.path("~/SNPmerge/flu/miqtl-master/R/", nm))
+sdp2formlmm<- function(sdp){
+        mysdp <- sdpCon[sdp]
+        names(mysdp) <- c('A','B','C','D','E','F','G','H')
+        if (length(unique(mysdp))==1){
+                fomula <- 'Pheno ~ 1 + (1|CC)'
+        }else{
+                fomula <- paste0('Pheno',' ~ ',paste(unique(mysdp)[-1],collapse=' + ')," + (1|CC)")
         }
+        as.formula(fomula)
+}
+
+
+diplotype_merge_mapping <- function(Phenofile,diplotype_file,MB,K=NULL,tmp.file.path="./"){
 
 diplotype_list <- fread(file=diplotype_file,header=TRUE,sep="\t",fill = TRUE)
 diplotype_list <-diplotype_list[pos >= (MB[1]*10^6) & pos < (MB[length(MB)]+1)*10^6]
@@ -119,9 +127,10 @@ for( mypos in poslist ){
 		#fit1 <- lm(Pheno ~  A + B + C + D + E + F + G ,data=mydf, weights=NUM.OBS)
 		#LHR <- 2*(as.numeric(logLik(fit1))-as.numeric(logLik(fit0)))
 
-		fit0 <- lmmbygls(Pheno ~ 1, data=mydf)
-		fit1 <- lmmbygls(Pheno ~ A + B + C + D + E + F + G, data=mydf) 
-		LHR <- 2*(fit1$logLik-fit0$logLik)
+		fit0 <- lmer(Pheno ~ 1 + (1|CC), data=mydf,REML=FALSE)
+		fit1 <- lmer(Pheno ~ A + B + C + D + E + F + G + (1|CC), data=mydf,REML=FALSE) 
+		#LHR <- 2*(fit1$logLik-fit0$logLik)
+		LHR <- 2*(as.numeric(logLik(fit1))-as.numeric(logLik(fit0)))
 	}
 
 	df <- 7 - ifelse( all(mydf$A==0) ,1,0) -ifelse( all(mydf$B==0) ,1,0) - ifelse( all(mydf$C==0) ,1,0) - ifelse( all(mydf$D==0) ,1,0) - ifelse( all(mydf$E==0) ,1,0) - ifelse( all(mydf$F==0) ,1,0) - ifelse( all(mydf$G==0) ,1,0)
@@ -139,7 +148,7 @@ for( mypos in poslist ){
 		}
 
 		sdp <- vec2sdp(sdp_vec)
-		sdpform <- sdp2form(sdp)
+		sdpform <- sdp2formlmm(sdp) ## LMM verion
 
 		thisdf <- mydf
 		for (ff in unique(sdp)){
@@ -155,8 +164,9 @@ for( mypos in poslist ){
 			fit1 <- lmmbygls.replicates(sdpform, data=thisdf,pheno.id="SUBJECT.NAME",geno.id="CC", little.K=Ksub)
 			LHR<-2*(fit1$logLik - fit0$logLik)	
 		}else{
-			fit1 <- lmmbygls(sdpform, data=thisdf)
-        		LHR <- 2*(fit1$logLik-fit0$logLik)
+			fit1 <- lmer(sdpform, data=thisdf,REML=FALSE)
+        		#LHR <- 2*(fit1$logLik-fit0$logLik)
+			LHR <- 2*(as.numeric(logLik(fit1))-as.numeric(logLik(fit0)))
 		}
 		df <- length(unique(sdp))-1
 		thisfs <- -log10(1-pchisq(LHR, df))	
