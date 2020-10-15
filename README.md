@@ -7,8 +7,9 @@ The example here use a toy example and run by
 Rscript MergeExample.r
 ```
 
-With input 
-*genodb  ISVdb database path, prefer to be on clusters
-*CHR Chomesome location of intrested peaks
-*peakI Peak interval, a two element vector showing the start and end of the QTL in MB. eg.c(39,41)
-*tmp.file.path Path of output folder
+Input variables | Discription
+------------ | -------------
+genodb       |   ISVdb database path, prefer to be on clusters
+CHR          | Chomesome location of intrested peaks
+peakI        |Peak interval, a two element vector showing the start and end of the QTL in MB. eg.c(39,41)
+tmp.file.path | Path of output folder
