@@ -7,9 +7,21 @@ The example here use a toy example and run by
 Rscript MergeExample.r
 ```
 
+The input includes:
 Input variables | Discription
 ------------ | -------------
 genodb       |   ISVdb database path, prefer to be on clusters
 CHR          | Chomesome location of intrested peaks
 peakI        |Peak interval, a two element vector showing the start and end of the QTL in MB. eg.c(39,41)
 tmp.file.path | Path of output folder
+
+
+And the output collums:
+Output collumn | Discription
+------------ | -------------
+pos       |   Position of variant
+sdp          | Strain distribution patterns
+prob          | Original probablity of variant genotype
+fs        |   negative log10 P value of merge model
+efs | negative log10 P value of 8 allele haplotype model
+A-H | Founder strain haplotypes
