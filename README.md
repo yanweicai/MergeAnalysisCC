@@ -4,6 +4,6 @@ Merge analysis tests whether the QTL signal identified by haplotype association 
 This repository is specifically designed to run merge analysis in the Colloabrative Cross mice, with data organized specifially as http://github.com/danoreper/ISVdb
 
 # Code 
-```javascript
+```R
 Rscript MergeExample.r
 ```
