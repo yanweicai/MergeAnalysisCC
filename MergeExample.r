@@ -15,7 +15,7 @@ tmp.file.path='./output/'
 
 # Data preparation (Strain mean), with toy dataset
 # might need to do more about the dataset
-mydf <- read.csv(file="at_data.csv",stringsAsFactors=FALSE)
+mydf <- read.csv(file="example_data.csv",stringsAsFactors=FALSE)
 #df <- merge( aggregate(y ~ strain,mydf,length),aggregate(y ~ strain,mydf,mean),by="strain")
 #colnames(df)<-c("CC","NUM.OBS","Pheno") # NUM.OBS number of observations serve as weight for regression
 #df<- df[1:51,] # remove CC078-CC082 as not in database
